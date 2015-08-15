@@ -6,7 +6,14 @@ Gem::Specification.new do |s|
   s.description = 'A simple gem to capitalize names, based off of: http://dzone.com/snippets/capitalize-proper-names'
   s.authors     = ['Kyle Tate']
   s.email       = 'kbt.tate@gmail.com'
-  s.files       = ['lib/capitalize_names.rb']
+  s.files       = [
+    'lib/capitalize_names.rb',
+    'lib/capitalize_names/errors.rb',
+    'lib/capitalize_names/capitalizer.rb',
+    'lib/capitalize_names/suffixes.rb',
+    'lib/capitalize_names/surnames.rb'
+  ]
+  s.add_runtime_dependency "activesupport", [">= 3"]
   s.homepage    = 'http://github.com/infiton/capitalize-names'
   s.license     = 'MIT'
 end
