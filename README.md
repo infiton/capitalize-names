@@ -9,7 +9,7 @@ gem install capitalize-names
 ## Quick Start
 
 ```
-require 'capitalize-names'
+require 'capitalize_names'
 
 CapitalizeNames.capitalize("TATE") # => "Tate"
 CapitalizeNames.capitalize("JoHn O'NEILL") # => "John O'Neill"
