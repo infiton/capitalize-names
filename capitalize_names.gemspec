@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'capitalize-names'
-  s.version     = '1.0.1'
-  s.date        = '2015-05-30'
+  s.version     = '1.0.2'
+  s.date        = '2016-04-17'
   s.summary     = 'Capitalizes names; handles edge cases.'
   s.description = 'A simple gem to capitalize names, based off of: http://dzone.com/snippets/capitalize-proper-names'
   s.authors     = ['Kyle Tate']
@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
     'lib/capitalize_names/surnames.rb'
   ]
   s.add_runtime_dependency "activesupport", [">= 3"]
+  s.add_development_dependency 'minitest', ' ~>5.8.4'
   s.homepage    = 'http://github.com/infiton/capitalize-names'
   s.license     = 'MIT'
 end
