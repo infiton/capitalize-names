@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'capitalize-names'
-  s.version     = '1.0.2'
+  s.version     = '1.0.3'
   s.date        = '2016-04-17'
   s.summary     = 'Capitalizes names; handles edge cases.'
   s.description = 'A simple gem to capitalize names, based off of: http://dzone.com/snippets/capitalize-proper-names'
