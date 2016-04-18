@@ -123,7 +123,6 @@ module CapitalizeNames
     "DeMott",
     "DeMuynck",
     "deNiet",
-    "DeNise",
     "DeNure",
     "DePalma",
     "DePasquale",

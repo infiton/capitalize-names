@@ -16,5 +16,6 @@ class CapitalizeNamesTest < Minitest::Test
     assert_equal "Sullivan", CapitalizeNames.capitalize("SULLIVAN") # IV in the middle
     assert_equal "Bumcorn", CapitalizeNames.capitalize("bumcorn") # MC in the middle
     assert_equal "Réne", CapitalizeNames.capitalize("RÉNE") # accents
+    assert_equal "Denise", CapitalizeNames.capitalize("DENISE")
   end
 end
