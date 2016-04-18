@@ -18,3 +18,5 @@ CapitalizeNames.capitalize("macarthur") # => "MacArthur"
 CapitalizeNames.capitalize("rick johnson-smith") # => "Rick Johnson-Smith"
 CapitalizeNames.capitalize("bob jones, iii") # => "Bob Jones, III"
 ```
+
+This is to test circle on PRs only
