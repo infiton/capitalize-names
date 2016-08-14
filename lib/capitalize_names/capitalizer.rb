@@ -59,7 +59,7 @@ module CapitalizeNames
 
         nm = nm.join(' ')
         hyphens_index.each do |idx|
-          nm = nm[0...idx] + '-' + nm[idx+1..-1]
+          nm = nm[0...idx] + '-' + (nm[idx+1..-1] || "")
         end
             
         nm = nm.gsub("Van ", "van ").gsub("De ", "de ").gsub("Dit ", "dit ")
