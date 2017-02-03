@@ -2,6 +2,10 @@ module CapitalizeNames
   class Capitalizer
     attr_accessor :name
 
+    MC = /^Mc(\w)(?=\w)/i 
+    MAC = /^Mac(\w)(?=\w)/i
+    O_APOSTROPHE = /^O'(\w)(?=\w)/i
+
     def initialize(name)
       @name = name
     end
@@ -14,7 +18,7 @@ module CapitalizeNames
     def capitalize
       begin
         capitalize!
-      rescue *CapitalizeNames::Errors.all_exceptions
+      rescue CapitalizeNames::Errors::GenericError
         name
       end
     end
@@ -27,10 +31,9 @@ module CapitalizeNames
 
       def _capitalize
         nm = name.mb_chars
-        mc = /^Mc(\w)(?=\w)/i 
-        mac = /^Mac(\w)(?=\w)/i
-        oap = /^O'(\w)(?=\w)/i
+
         hyphens_index = []
+
         while nm.index('-') do
           index = nm.index('-')
           hyphens_index << index
@@ -39,19 +42,19 @@ module CapitalizeNames
 
         nm = nm.split.map{|w| w.capitalize}.map{ |w| 
           begin 
-            w.gsub(mc, "Mc" + w[2].upcase)
+            w.gsub(MC, "Mc" + w[2].upcase)
           rescue
             w 
           end
         }.map{|w| 
           begin 
-            w.gsub(mac, "Mac" + w[3].upcase)
+            w.gsub(MAC, "Mac" + w[3].upcase)
           rescue
             w 
           end
         }.map{|w| 
           begin 
-            w.gsub(oap, "O'" + w[2].upcase)
+            w.gsub(O_APOSTROPHE, "O'" + w[2].upcase)
           rescue
             w 
           end

@@ -19,4 +19,16 @@ class CapitalizeNamesTest < Minitest::Test
     assert_equal "Denise", CapitalizeNames.capitalize("DENISE")
     assert_equal "Gleny Mejia-", CapitalizeNames.capitalize("Gleny Mejia-")
   end
+
+  def test_invalid_name
+    assert_raises(CapitalizeNames::Errors::InvalidName) { CapitalizeNames.capitalize!(nil) }
+    assert_nil CapitalizeNames.capitalize(nil)
+  end
+
+  def test_non_mutation
+    str = "TATE"
+    new_str = CapitalizeNames.capitalize("TATE")
+
+    assert_equal str, "TATE"
+  end
 end
