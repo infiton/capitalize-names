@@ -29,58 +29,56 @@ module CapitalizeNames
         true
       end
 
+      def surname_suffix_position?(position, name, surname_or_suffix)
+        # surname/suffix must be:
+        # 1. at start of name or after a space or a -
+        #          -and-
+        # 2. followed by the end of string or a space or a -
+        (
+          (position == 0) || \
+          (
+            position > 0 && (name[position-1] == ' ' || name[position-1] == '-')
+          )
+        ) && (
+          (name.length == position+surname_or_suffix.length) || \
+          (name[position+surname_or_suffix.length] == ' ') || (name[position+surname_or_suffix.length] == '-')
+        )
+      end
+
       def _capitalize
-        nm = name.mb_chars
+        _name = name
 
         hyphens_index = []
 
-        while nm.index('-') do
-          index = nm.index('-')
+        while _name.index('-') do
+          index = _name.index('-')
           hyphens_index << index
-          nm = nm[0...index] + ' ' + nm[index+1..-1]
+          _name = _name[0...index] << ' ' << _name[index+1..-1]
         end
 
-        nm = nm.split.map{|w| w.capitalize}.map{ |w| 
-          begin 
-            w.gsub(MC, "Mc" + w[2].upcase)
-          rescue
-            w 
-          end
-        }.map{|w| 
-          begin 
-            w.gsub(MAC, "Mac" + w[3].upcase)
-          rescue
-            w 
-          end
-        }.map{|w| 
-          begin 
-            w.gsub(O_APOSTROPHE, "O'" + w[2].upcase)
-          rescue
-            w 
-          end
+        _name = _name.split.map{ |w| 
+          w.mb_chars.capitalize.to_str 
+        }.map{ |w|
+          w.gsub(MC) { "Mc#{$1.upcase}" }\
+           .gsub(MAC) { "Mac#{$1.upcase}" }\
+           .gsub(O_APOSTROPHE) { "O'#{$1.upcase}" }
         }
 
-        nm = nm.join(' ')
+        _name = _name.join(' ')
         hyphens_index.each do |idx|
-          nm = nm[0...idx] + '-' + (nm[idx+1..-1] || "")
+          _name = _name[0...idx] << '-' << (_name[idx+1..-1] || "")
         end
             
-        nm = nm.gsub("Van ", "van ").gsub("De ", "de ").gsub("Dit ", "dit ")
-        nm += ' '
+        _name = _name.gsub("Van ", "van ").gsub("De ", "de ").gsub("Dit ", "dit ")
+        _name << ' '
 
-        (CapitalizeNames::SURNAMES + CapitalizeNames::SUFFIXES).each do |surname|
-          pos = nm.downcase.index(surname.downcase)
-          if pos 
-            # surname/suffix must be:
-            # 1. at start of name or after a space or a -
-            #          -and-
-            # 2. followed by the end of string or a space or a -
-            if ( ((pos == 0) or (pos > 0 and (nm[pos-1] == ' ' or nm[pos-1] == '-'))) and ((nm.length == pos+surname.length) or (nm[pos+surname.length] == ' ') or (nm[pos+surname.length] == '-')) )
-              nm = nm[0...pos] + surname + nm[pos+surname.length..-1]
-            end
+        (CapitalizeNames::SURNAMES + CapitalizeNames::SUFFIXES).each do |surname_or_suffix|
+          position = _name.downcase.index(surname_or_suffix.downcase)
+          if position and surname_suffix_position?(position, _name, surname_or_suffix)
+            _name = _name[0...position] << surname_or_suffix << _name[position+surname_or_suffix.length..-1]
           end
         end
-        nm.strip
+        _name.strip
       end
   end
 end

@@ -7,7 +7,9 @@ class CapitalizeNamesTest < Minitest::Test
     assert_equal "Smith", CapitalizeNames.capitalize("smith") #basic downcase
     assert_equal "Clarke", CapitalizeNames.capitalize("cLaRKe") #basic mix
     assert_equal "McElroy", CapitalizeNames.capitalize("MCELROY") #mc
+    assert_equal "Mc", CapitalizeNames.capitalize("MC") #mc
     assert_equal "MacElvany", CapitalizeNames.capitalize("macelvany") #mac
+    assert_equal "Mac", CapitalizeNames.capitalize("mac") #mac
     assert_equal "O'Neill", CapitalizeNames.capitalize("O'NEILL") # O'
     assert_equal "VanWinkle", CapitalizeNames.capitalize("VANWINKLE") #from surnames list
     assert_equal "van Buren", CapitalizeNames.capitalize("van buren") #"van "
@@ -16,6 +18,7 @@ class CapitalizeNamesTest < Minitest::Test
     assert_equal "Sullivan", CapitalizeNames.capitalize("SULLIVAN") # IV in the middle
     assert_equal "Bumcorn", CapitalizeNames.capitalize("bumcorn") # MC in the middle
     assert_equal "Réne", CapitalizeNames.capitalize("RÉNE") # accents
+    assert_equal "Élise", CapitalizeNames.capitalize("éLiSE") #accents
     assert_equal "Denise", CapitalizeNames.capitalize("DENISE")
     assert_equal "Gleny Mejia-", CapitalizeNames.capitalize("Gleny Mejia-")
   end
@@ -27,7 +30,7 @@ class CapitalizeNamesTest < Minitest::Test
 
   def test_non_mutation
     str = "TATE"
-    new_str = CapitalizeNames.capitalize("TATE")
+    CapitalizeNames.capitalize(str)
 
     assert_equal str, "TATE"
   end
