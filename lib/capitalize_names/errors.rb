@@ -1,13 +1,6 @@
 module CapitalizeNames
   module Errors
-    class << self
-      def all_exceptions
-        self.constants
-          .map { |c| self.const_get(c) }
-          .select{ |c| c < Exception }
-      end
-    end
-
-    class InvalidName < Exception; end;
+    class GenericError < Exception; end
+    class InvalidName < GenericError; end
   end
 end
