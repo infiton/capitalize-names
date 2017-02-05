@@ -12,11 +12,17 @@ class CapitalizeNamesTest < Minitest::Test
     assert_equal "Mac", CapitalizeNames.capitalize("mac") #mac
     assert_equal "O'Neill", CapitalizeNames.capitalize("O'NEILL") # O'
     assert_equal "VanWinkle", CapitalizeNames.capitalize("VANWINKLE") #from surnames list
+    assert_equal "Rip VanWinkle", CapitalizeNames.capitalize("rip VANWINKLE") #from surnames list
     assert_equal "van Buren", CapitalizeNames.capitalize("van buren") #"van "
+    assert_equal "Martin van Buren", CapitalizeNames.capitalize("MARTIN van buren") #"van "
     assert_equal "Bob Jones, III", CapitalizeNames.capitalize("bob jones, iii") #suffix
     assert_equal "Johnson-Smith", CapitalizeNames.capitalize("johnson-smith") #hypenated
     assert_equal "Sullivan", CapitalizeNames.capitalize("SULLIVAN") # IV in the middle
     assert_equal "Bumcorn", CapitalizeNames.capitalize("bumcorn") # MC in the middle
+    assert_equal "Tomacron", CapitalizeNames.capitalize("TOMACRON") # MAC in the middle
+    assert_equal "Treo'las", CapitalizeNames.capitalize("treo'las") # O' in the middle
+    assert_equal "Ronald McDonald", CapitalizeNames.capitalize("ronald mcdonald")
+    assert_equal "Sarah MacDonald", CapitalizeNames.capitalize("Sarah macdonald")
     assert_equal "Réne", CapitalizeNames.capitalize("RÉNE") # accents
     assert_equal "Élise", CapitalizeNames.capitalize("éLiSE") #accents
     assert_equal "Denise", CapitalizeNames.capitalize("DENISE")
