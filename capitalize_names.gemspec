@@ -4,7 +4,7 @@ require File.expand_path('../lib/capitalize_names/version', __FILE__)
 Gem::Specification.new do |s|
   s.name        = 'capitalize-names'
   s.version     = CapitalizeNames::VERSION
-  s.date        = '2016-04-17'
+  s.date        = '2017-09-20'
   s.summary     = 'Capitalizes names; handles edge cases.'
   s.description = 'A simple gem to capitalize names, based off of: http://dzone.com/snippets/capitalize-proper-names'
   s.authors     = ['Kyle Tate']
