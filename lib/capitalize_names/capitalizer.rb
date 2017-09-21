@@ -2,6 +2,8 @@ module CapitalizeNames
   class Capitalizer
     attr_accessor :name
 
+    HYPHEN = /(\s*-\s*)/
+
     MC = /^Mc(\w)(?=\w)/i 
     MAC = /^Mac(\w)(?=\w)/i
     O_APOSTROPHE = /^O'(\w)(?=\w)/i
@@ -48,12 +50,20 @@ module CapitalizeNames
       def _capitalize
         _name = name
 
-        hyphens_index = []
+        hyphens = []
 
-        while _name.index('-') do
-          index = _name.index('-')
-          hyphens_index << index
-          _name = _name[0...index] << ' ' << _name[index+1..-1]
+        while (match = _name.match(HYPHEN)) do
+          _start = match.begin(1)
+          _end = match.end(1)
+          _value = match[1]
+
+          if _start == 0
+            _name = _name[_end..-1]
+          else
+            _name = _name[0..._start] << ' ' << _name[_end..-1]
+          end
+
+          hyphens << [_start, _end, _value]
         end
 
         _name = _name.split.map{ |w| 
@@ -64,13 +74,18 @@ module CapitalizeNames
            .gsub(O_APOSTROPHE) { "O'#{$1.upcase}" }
         }
 
-        _name = _name.join(' ')
-        hyphens_index.each do |idx|
-          _name = _name[0...idx] << '-' << (_name[idx+1..-1] || "")
+        _name = _name.join(" ")
+
+        hyphens.reverse.each do |_start, _end, _value|
+          if _start == 0
+            _name = _value << _name
+          else
+            _name = _name[0..._start] << _value << (_name[_start+1..-1] || "")
+          end
         end
             
         _name = _name.gsub("Van ", "van ").gsub("De ", "de ").gsub("Dit ", "dit ")
-        _name << ' '
+        _name << " "
 
         (CapitalizeNames::SURNAMES + CapitalizeNames::SUFFIXES).each do |surname_or_suffix|
           position = _name.downcase.index(surname_or_suffix.downcase)
@@ -78,7 +93,8 @@ module CapitalizeNames
             _name = _name[0...position] << surname_or_suffix << _name[position+surname_or_suffix.length..-1]
           end
         end
-        _name.strip
+
+        _name[0...-1]
       end
   end
 end
