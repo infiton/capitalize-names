@@ -9,7 +9,7 @@ module CapitalizeNames
     O_APOSTROPHE = /^O'(\w)(?=\w)/i
 
     def initialize(name)
-      @name = name
+      @name = name&.gsub(/\s+/, ' ')&.strip
     end
 
     def capitalize!
