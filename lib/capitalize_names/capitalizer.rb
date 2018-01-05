@@ -4,7 +4,7 @@ module CapitalizeNames
 
     HYPHEN = /(\s*-\s*)/
 
-    MC = /^Mc(\w)(?=\w)/i 
+    MC = /^Mc(\w)(?=\w)/i
     MAC = /^Mac(\w)(?=\w)/i
     O_APOSTROPHE = /^O'(\w)(?=\w)/i
 
@@ -66,8 +66,8 @@ module CapitalizeNames
           hyphens << [_start, _end, _value]
         end
 
-        _name = _name.split.map{ |w| 
-          w.mb_chars.capitalize.to_str 
+        _name = _name.split.map{ |w|
+          w.mb_chars.capitalize.to_str
         }.map{ |w|
           w.gsub(MC) { "Mc#{$1.upcase}" }\
            .gsub(MAC) { "Mac#{$1.upcase}" }\
@@ -83,8 +83,8 @@ module CapitalizeNames
             _name = _name[0..._start] << _value << (_name[_start+1..-1] || "")
           end
         end
-            
-        _name = _name.gsub("Van ", "van ").gsub("De ", "de ").gsub("Dit ", "dit ")
+
+        _name = _name.gsub("Van ", "van ").gsub("De La ", "de la ").gsub("De ", "de ").gsub("Dit ", "dit ")
         _name << " "
 
         (CapitalizeNames::SURNAMES + CapitalizeNames::SUFFIXES).each do |surname_or_suffix|
