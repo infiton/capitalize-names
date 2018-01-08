@@ -30,6 +30,7 @@ class CapitalizeNamesTest < Minitest::Test
     assert_equal "-Gleny Mejia-", CapitalizeNames.capitalize("-Gleny Mejia-")
     assert_equal "Cinnamon Ballantye - Clarke", CapitalizeNames.capitalize("Cinnamon Ballantye - Clarke")
     assert_equal " - Cinnamon Ballantye - Clarke-van Buren- ", CapitalizeNames.capitalize(" - CinnAMon BaLLantye - Clarke-VAN BUREN- ")
+    assert_equal "Jorge de la Rosa", CapitalizeNames.capitalize("JORGE DE LA ROSA")
   end
 
   def test_invalid_name
