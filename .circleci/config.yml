@@ -11,5 +11,5 @@ jobs:
       - checkout
       - ruby/bundle-install
       - run:
-          name: test
+          name: tests
           command: bundle exec rake
