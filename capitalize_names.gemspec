@@ -13,7 +13,8 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '~> 2.0'
   s.add_runtime_dependency "activesupport", [">= 3"]
-  s.add_development_dependency 'minitest', ' ~>5.8.4'
+  s.add_development_dependency 'rake'
+  s.add_development_dependency 'minitest'
   s.homepage    = 'http://github.com/infiton/capitalize-names'
   s.license     = 'MIT'
 end
