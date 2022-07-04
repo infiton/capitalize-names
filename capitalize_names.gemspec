@@ -12,8 +12,7 @@ Gem::Specification.new do |s|
   s.email       = "kbt.tate@gmail.com"
   s.files       = Dir.glob("{lib}/**/*")
 
-  s.required_ruby_version = "> 2.0"
-  s.add_runtime_dependency("activesupport", [">= 3"])
+  s.required_ruby_version = ">= 2.4"
   s.add_development_dependency("minitest")
   s.add_development_dependency("rake")
   s.add_development_dependency("rubocop")

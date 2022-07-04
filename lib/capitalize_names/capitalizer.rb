@@ -102,7 +102,7 @@ module CapitalizeNames
       str.split(/(\s|-)/).map do |word|
         next word if word.match?(/(\s|-)/)
 
-        output = word.mb_chars.capitalize.to_str
+        output = word.capitalize
         next output unless surname_rules
         next capitalize_surname(output) if surname?(output)
 
