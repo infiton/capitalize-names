@@ -1,4 +1,3 @@
-[![Circle CI](https://circleci.com/gh/infiton/capitalize-names.svg?style=shield)](https://circleci.com/gh/infiton/capitalize-names)
 # capitalize-names
 Simple proper name capitalization that handles edge cases. Originally based off of http://dzone.com/snippets/capitalize-proper-names
 
