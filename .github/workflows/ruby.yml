@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   test:
@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        ruby-version: ['2.4', '2.5']
+        ruby-version: ['2.4', '2.5', '2.6', '2.7', '3.0', '3.1']
 
     steps:
     - uses: actions/checkout@v2
@@ -22,7 +22,8 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-    - name: rubocop
+    - if: ${{ matrix.ruby-version == '3.1' }}
+      name: rubocop
       run: bundle exec rubocop
     - name: tests
       run: bundle exec rake test
