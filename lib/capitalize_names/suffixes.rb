@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module CapitalizeNames
   SUFFIXES = [
     "II",
@@ -17,6 +19,6 @@ module CapitalizeNames
     "4th",
     "(4th)",
     "5th",
-    "(5th)"
+    "(5th)",
   ]
 end
