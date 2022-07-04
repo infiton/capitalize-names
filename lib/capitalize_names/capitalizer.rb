@@ -1,100 +1,171 @@
+# frozen_string_literal: true
+
 module CapitalizeNames
   class Capitalizer
-    attr_accessor :name
+    attr_reader :name, :options
 
-    HYPHEN = /(\s*-\s*)/
+    NAME = %r{
+      (                                                 # start capture
+        (?:                                             # start first name token
+          (?:(?:van\ )|(?:de\ (?:la\ )?)|(?:dit\ ))?    # optionally match one of van, de, de la, dit and space
+          (?:[[:alnum:]]|'|\(|\))+                      # match any unicode character, number, apostrophe or bracket
+        )                                               # end first name token
+        (?:                                             # start optional additional name tokens
+          -                                             # additional name tokens start with -
+          (?:                                           # start additional name token
+            (?:(?:van\ )|(?:de\ (?:la\ )?)|(?:dit\ ))?  # optionally match one of van, de, de la, dit and space
+            (?:[[:alnum:]]|'|\(|\))+                    # match any unicode character, number, apostrophe or bracket
+          )                                             # end additional name token
+        )*                                              # end optional additional name tokens
+      )                                                 # end capture
+    }ix
 
-    MC = /^Mc(\w)(?=\w)/i 
-    MAC = /^Mac(\w)(?=\w)/i
-    O_APOSTROPHE = /^O'(\w)(?=\w)/i
+    MC = /(?<=\A|-)Mc(\w)(?=\w)/i
+    MAC = /(?<=\A|-)Mac(\w)(?=\w)/i
+    O_APOSTROPHE = /(?<=\A|-)O'(\w)(?=\w)/i
+    VAN_SPACE = /(?<=\A|-)Van /i
+    DE_LA_SPACE = /(?<=\A|-)De La /i
+    DE_SPACE = /(?<=\A|-)De /i
+    DIT_SPACE = /(?<=\A|-)Dit /i
 
-    def initialize(name)
+    VALID_FORMATS = [:fullname, :firstname, :givenname, :lastname, :surname]
+
+    DEFAULT_OPTIONS = {
+      format: :fullname,
+      skip_mc: false,
+      skip_mac: false,
+      skip_o_apostrophe: false,
+      skip_van_space: false,
+      skip_de_space: false,
+      skip_de_la_space: false,
+      skip_dit_space: false,
+    }
+
+    SUFFIX_MAP = CapitalizeNames::SUFFIXES.each_with_object({}) { |suffix, map| map[suffix.downcase] = suffix }
+    SURNAME_MAP = CapitalizeNames::SURNAMES.each_with_object({}) { |surname, map| map[surname.downcase] = surname }
+
+    def initialize(name, options = {})
       @name = name
+      @options = DEFAULT_OPTIONS.merge(options)
     end
 
     def capitalize!
       can_process?
-      _capitalize
+      capitalize_name
     end
 
     def capitalize
-      begin
-        capitalize!
-      rescue CapitalizeNames::Errors::GenericError
-        name
-      end
+      capitalize!
+    rescue CapitalizeNames::Errors::GenericError
+      name
     end
 
     private
-      def can_process?
-        raise CapitalizeNames::Errors::InvalidName, "Cannot capitalize nil" unless name
-        true
+
+    def can_process?
+      raise CapitalizeNames::Errors::InvalidName, "Cannot capitalize nil" unless name
+
+      true
+    end
+
+    def name_format
+      @name_format ||= validate_name_format
+    end
+
+    def validate_name_format
+      unless VALID_FORMATS.include?(options[:format])
+        raise CapitalizeNames::Errors::InvalidOption,
+          "Invalid format: #{@options[:format]}, must be one of #{VALID_FORMATS.join(", ")}"
       end
 
-      def surname_suffix_position?(position, name, surname_or_suffix)
-        # surname/suffix must be:
-        # 1. at start of name or after a space or a -
-        #          -and-
-        # 2. followed by the end of string or a space or a -
-        (
-          (position == 0) || \
-          (
-            position > 0 && (name[position-1] == ' ' || name[position-1] == '-')
-          )
-        ) && (
-          (name.length == position+surname_or_suffix.length) || \
-          (name[position+surname_or_suffix.length] == ' ') || (name[position+surname_or_suffix.length] == '-')
-        )
-      end
+      options[:format]
+    end
 
-      def _capitalize
-        _name = name
-
-        hyphens = []
-
-        while (match = _name.match(HYPHEN)) do
-          _start = match.begin(1)
-          _end = match.end(1)
-          _value = match[1]
-
-          if _start == 0
-            _name = _name[_end..-1]
-          else
-            _name = _name[0..._start] << ' ' << _name[_end..-1]
-          end
-
-          hyphens << [_start, _end, _value]
-        end
-
-        _name = _name.split.map{ |w| 
-          w.mb_chars.capitalize.to_str 
-        }.map{ |w|
-          w.gsub(MC) { "Mc#{$1.upcase}" }\
-           .gsub(MAC) { "Mac#{$1.upcase}" }\
-           .gsub(O_APOSTROPHE) { "O'#{$1.upcase}" }
+    def tokenize_name
+      name.split(NAME).map do |token|
+        {
+          value: token,
+          is_name: token.match?(NAME),
         }
-
-        _name = _name.join(" ")
-
-        hyphens.reverse.each do |_start, _end, _value|
-          if _start == 0
-            _name = _value << _name
-          else
-            _name = _name[0..._start] << _value << (_name[_start+1..-1] || "")
-          end
-        end
-            
-        _name = _name.gsub("Van ", "van ").gsub("De ", "de ").gsub("Dit ", "dit ")
-        _name << " "
-
-        (CapitalizeNames::SURNAMES + CapitalizeNames::SUFFIXES).each do |surname_or_suffix|
-          position = _name.downcase.index(surname_or_suffix.downcase)
-          if position and surname_suffix_position?(position, _name, surname_or_suffix)
-            _name = _name[0...position] << surname_or_suffix << _name[position+surname_or_suffix.length..-1]
-          end
-        end
-
-        _name[0...-1]
       end
+    end
+
+    def suffix?(str)
+      SUFFIX_MAP.key?(str.downcase)
+    end
+
+    def surname?(str)
+      SURNAME_MAP.key?(str.downcase)
+    end
+
+    def capitalize_str(str, surname_rules)
+      str.split(/(\s|-)/).map do |word|
+        next word if word.match?(/(\s|-)/)
+
+        output = word.mb_chars.capitalize.to_str
+        next output unless surname_rules
+        next capitalize_surname(output) if surname?(output)
+
+        output = output.gsub(MC) { "Mc#{Regexp.last_match(1).upcase}" } unless options[:skip_mc]
+        output = output.gsub(MAC) { "Mac#{Regexp.last_match(1).upcase}" } unless options[:skip_mac]
+        output = output.gsub(O_APOSTROPHE) { "O'#{Regexp.last_match(1).upcase}" } unless options[:skip_o_apostrophe]
+
+        output
+      end.join("")
+    end
+
+    def capitalize_givenname(str)
+      capitalize_str(str, false)
+    end
+
+    def capitalize_suffix(str)
+      SUFFIX_MAP[str.downcase]
+    end
+
+    def capitalize_surname(str)
+      SURNAME_MAP[str.downcase]
+    end
+
+    def capitalize_lastname(str)
+      return capitalize_suffix(str) if suffix?(str)
+
+      output = capitalize_str(str, true)
+
+      output = output.gsub(VAN_SPACE, "van ") unless options[:skip_van_space]
+      output = output.gsub(DIT_SPACE, "dit ") unless options[:skip_dit_space]
+
+      if output.match?(DE_LA_SPACE)
+        output = output.gsub(DE_LA_SPACE, "de la ") unless options[:skip_de_la_space]
+      else
+        output = output.gsub(DE_SPACE, "de ") unless options[:skip_de_space]
+      end
+
+      output
+    end
+
+    def capitalize_name
+      tokens = tokenize_name
+
+      has_capitalized_last_name = false
+
+      tokens.reverse.map do |token|
+        token_value = token[:value]
+        next token_value unless token[:is_name]
+
+        case name_format
+        when :firstname, :givenname
+          capitalize_givenname(token_value)
+        when :lastname, :surname
+          capitalize_lastname(token_value)
+        else
+          if has_capitalized_last_name
+            capitalize_givenname(token_value)
+          else
+            has_capitalized_last_name = !suffix?(token_value)
+            capitalize_lastname(token_value)
+          end
+        end
+      end.reverse.join("")
+    end
   end
 end

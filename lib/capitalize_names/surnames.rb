@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module CapitalizeNames
   SURNAMES = [
     "ApShaw",
@@ -330,6 +332,7 @@ module CapitalizeNames
     "Mackartee",
     "Mackay",
     "Macken",
+    "Mackenzie",
     "Mackert",
     "Mackey",
     "Mackie",
@@ -584,6 +587,6 @@ module CapitalizeNames
     "VonSeldern",
     "VonSpringer",
     "VonVeyelmann",
-    "VonZweidorff"
+    "VonZweidorff",
   ]
 end

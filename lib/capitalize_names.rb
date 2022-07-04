@@ -1,20 +1,21 @@
-#based on http://dzone.com/snippets/capitalize-proper-names
-require 'capitalize_names/errors'
-require 'capitalize_names/capitalizer'
-require 'capitalize_names/suffixes'
-require 'capitalize_names/surnames'
-require 'active_support/core_ext/string/multibyte'
+# frozen_string_literal: true
+
+# originally based on http://dzone.com/snippets/capitalize-proper-names
+require "active_support/core_ext/string/multibyte"
+
+require "capitalize_names/errors"
+require "capitalize_names/suffixes"
+require "capitalize_names/surnames"
+require "capitalize_names/capitalizer"
 
 module CapitalizeNames
-
   class << self
-
-    def capitalize!(name)
-      Capitalizer.new(name).capitalize!
+    def capitalize!(name, options = {})
+      Capitalizer.new(name, options).capitalize!
     end
 
-    def capitalize(name)
-      Capitalizer.new(name).capitalize
+    def capitalize(name, options = {})
+      Capitalizer.new(name, options).capitalize
     end
   end
 end
